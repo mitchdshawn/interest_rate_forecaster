@@ -30,7 +30,7 @@ There were three options for deciding what documents to use:
 2. Use all documents
 3. Use a consistent pattern to pull a sub-selection for each month
 
-A manual process would be wastefully time consuming, and require frequent updates to specify what documents to use in the future.  Using all the documents would be computationally inefficient, particularly given the fact that many communication PDF&#39;s hold no predictive value.  There may also be a problem with unbalanced data features, if some months have much less information that other months.
+A manual process would be wastefully time consuming, and require frequent updates to specify what documents to use in the future.  Using all the documents would be computationally inefficient, particularly given the fact that many communications PDF&#39;s holds no predictive value.  There may also be a problem with unbalanced data features, if some months have much less information that other months.
 
 A consistent pattern was settled on, using the PDF document for each month that has the largest file size.  There are problems with this approach:
 
@@ -55,11 +55,11 @@ Forecasting actual interest rate percentages would be an extremely specific, and
 
 By using a hawkish/dovish sentiment prediction, we can remove some of the undesirable connections an NLP model is likely to make.  This sentiment analysis allows our highly unusual low interest rate environment to be compared to past high-interest rate environments.
 
-Initially I explored forecasting monthly sentiment (month+1 = increase, month+2 =neutral, etc).  This however could lead to volatile predictions, and was a level of detail not required for the forecast.
+Initially I explored forecasting monthly sentiment (month+1 = increase, month+2 =neutral, etc.).  This however could lead to volatile predictions, and was a level of detail not required for the forecast.
 
 ![1](images/1.png)
 
-As seen above, the interest rate environments we have been in for the past few decades has been a rising, neutral, or falling environment.  With a broader and less focused y-target, the model could give a mid-term sentiment prediction, rather than a short-term immediate action prediction.
+As seen above, the interest rate environments we have been in for the past few decades have been a rising, neutral, or falling environment.  With a broader and less focused y-target, the model could give a mid-term sentiment prediction, rather than a short-term immediate action prediction.
 
 I&#39;ve settled on a 6-month sentiment prediction, rather than a monthly prediction.  This is focused enough to be an actionable prediction, but broad enough to not throw high volatility into the model.  Below is the example actual flow changes of interest rates.  Middle points in the line are neutral, with rising or falling 6-month rates being above or below.
 
@@ -94,11 +94,11 @@ The model achieves approximately 65% accuracy currently.  A higher accuracy is p
 
 Topic Analysis
 
-Using LDA, we can review an estimated grouping of topics that were discussed in communications that preceeded reductions or increases in actual interest rates.  Reviewing the topics for the topics that preceeded increases:
+Using LDA, we can review an estimated grouping of topics that were discussed in communications that preceded reductions or increases in actual interest rates.  Reviewing the topics for the topics that preceded increases:
 
 ![5](images/5.png)
 
-The discussion topics may not be the same as the important features for the model.  In the above example LDA analysis, n\_gram range of 3 and 4 word strings were used with the TFIDF vectorizer.  We can see word fragments are prevalent, again showing that further in-depth spell checking may improve the model.  We do see common logical topics coming up, such as discussing manufacturing orders, financial markets, and money supply.  If we compare this to LDA below on communications that preceeded rate decreases:
+The discussion topics may not be the same as the important features for the model.  In the above example LDA analysis, n\_gram range of 3- and 4-word strings were used with the TFIDF vectorizer.  We can see word fragments are prevalent, again showing that further in-depth spell checking may improve the model.  We do see common logical topics coming up, such as discussing manufacturing orders, financial markets, and money supply.  If we compare this to LDA below on communications that preceded rate decreases:
 
 ![6](images/6.jpg)
 
@@ -110,13 +110,13 @@ Below is a comparison of the actual interest rate, the actual 6-month change, an
 
 ![7](images/7.png)
 
-Next we&#39;ll review a few examples of interest rate environments that it handles well, where it didn&#39;t handle it well, and review the logic behind how it was mistaken.
+Next, we&#39;ll review a few examples of interest rate environments that it handles well, where it didn&#39;t handle it well, and review the logic behind how it was mistaken.
 
 Current rate environment
 
 ![8](images/8.png)
 
-The model was able to identify the historically unusual low interest rate environment we&#39;ve been in globally since the 2008 recession.  It predicted stable rates, and continues to predict further rate increases as the year moves on.  We are currently in one of the longest market bull runs in history, a recession is likely lurking around the corner for US markets as of early 2019.  Next we&#39;ll review how the model handled the 2008 recession.
+The model was able to identify the historically unusual low interest rate environment we&#39;ve been in globally since the 2008 recession.  It predicted stable rates, and continues to predict further rate increases as the year moves on.  We are currently in one of the longest market bull runs in history, a recession is likely lurking around the corner for US markets as of early 2019.  Next, we&#39;ll review how the model handled the 2008 recession.
 
 2008 Recession
 
@@ -128,7 +128,7 @@ Dot-Com Crash
 
 ![10](images/10.png)
 
-As we usually see, the interest rates were steadily increasing leading up to the dot-com crash.  In this model iteration, it experienced some confusion on the way down again.  Later on in this technical document, we&#39;ll be reviewing how the model can be improved, and how this volitility can be reduced.  Currently each month observation is treated as a unique and isolated occurence, the previous interest rates are not considered.
+As we usually see, the interest rates were steadily increasing leading up to the dot-com crash.  In this model iteration, it experienced some confusion on the way down again.  Later on, in this technical document, we&#39;ll be reviewing how the model can be improved, and how this volatility can be reduced.  Currently each month observation is treated as a unique and isolated occurrence, the previous interest rates are not considered.
 
 Part 4: Model Improvement
 
@@ -144,7 +144,7 @@ The model performs very well as expected until 2008 since it had a complete view
 
 ![12](images/12.jpg)
 
-By smoothing out the predictions, using the single period moving average, the confusion the model experienced month to month averages out to a fairly accurate long-term prediction.  Again to note, the above model was only trained on data until 2008, so it had no information on proper nouns or dates to connect to the current rate environment of the past 10 years.  It was not trained on the full dataset before 2008, only a random 75% partial sample.
+By smoothing out the predictions, using the single period moving average, the confusion the model experienced month to month averages out to a fairly accurate long-term prediction.  Again, to note, the above model was only trained on data until 2008, so it had no information on proper nouns or dates to connect to the current rate environment of the past 10 years.  It was not trained on the full dataset before 2008, only a random 75% partial sample.
 
 Below are the moving average predictions with a model trained only until the year 2000:
 
@@ -161,7 +161,7 @@ This is not a tool that should be used on its own to make investment decisions. 
 With further improvements the model would be a strong analysis tool to compliment other quantitative and qualitative analysis.  Improvements may include but not be limited to:
 
 1. More thorough spell checking.  The current spell checking used for this model was limited by computing power and time available.  Investing more resources into spell checking models results in better accuracy.
-2. Increase the quantity of text available to the model, and modify the criteria for a text to be included in the model.  This model used the largest single document for each month.  There are several flaws with this method, such as the fact that the largest filesize may not be the most meaningful document, and some documents have multi-part PDF&#39;s that would only be half-covered with this current method.
+2. Increase the quantity of text available to the model, and modify the criteria for a text to be included in the model.  This model used the largest single document for each month.  There are several flaws with this method, such as the fact that the largest file size may not be the most meaningful document, and some documents have multi-part PDF&#39;s that would only be half-covered with this current method.
 3. Revising the y-target.  This could include revising how far out the target is, and the threshold for considering an interest rate change to be significant enough to be considered non-neutral.
 
 Supplemental recommended analysis would include:
