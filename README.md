@@ -23,5 +23,5 @@ xgboost<br>
 pyLDAvis<br>
 
 ### Data sources
-[US Federal Reserve FRED Database](https://fred.stlouisfed.org/)
+[US Federal Reserve FRED Database](https://fred.stlouisfed.org/)<br>
 [US FOMC](https://fraser.stlouisfed.org/title/677)
