@@ -6,15 +6,15 @@ Shawn D. Mitchell
 
 Executive Summary
 
-Using US Federal Reserve Open Market Committee public communications, we can forecast with approximately 80% accuracy the future 6-month interest moves.  Interest rate moves are considered only as positive, negative, or neutral sentiment within a given threshold.  Interest rate change amounts are not forecasted, only whether it is likely to change up or down.
+Using US Federal Reserve Open Market Committee public communications, we can forecast with approximately 65% accuracy the following 6-month interest rate sentiment.  This is based on using FOMC communications since 1960, and allowing the model to be trained on a random 75% training sample.  Removing portions of data based on date significantly reduces future model accuracy, as the features of the communications changes over time, and the economic/political environment changes over time.  When used with caution, an NLP model using FOMC communications as features can be a useful supplemental tool for interest rate forecasting.
 
 Part 1: Summary and Problem Statement
 
 Can predictions of future interest rates be made based solely on FOMC communications?
 
-Predicting the future actions of the US Federal Reserve is a difficult task, with no method of having 100% accuracy unless one both has internal information at the FOMC and has a perfect view of the future US economic situation.  Their communicated intended actions aren&#39;t always completely aligned with the actions they take, and their real actions could be completely contrary to past communicated intentions following an economic shock.
+Predicting the future actions of the US Federal Reserve is a difficult task, with no method of having 100% accuracy unless one both has internal information at the FOMC and has a perfect view of the future US economic situation.  Their communicated intended actions aren&#39;t always completely aligned with the actions they take, and their real actions could be completely contrary to past communicated intentions following an economic shock.  As with all quantitative machine learning models for finance, it only knows what&#39;s happened in the past.  Economic environments change significantly over time, and every economic shock that occurs has unique characteristics.
 
-An NLP model with reasonable accuracy, combined with additional quantitative and qualitative information, would be a highly valuable tool.
+An NLP model with reasonable accuracy, combined with additional quantitative and qualitative information, would be a highly valuable tool.  The model should not be relied on as a stand-alone tool.
 
 Part 2: Data
 
@@ -100,7 +100,7 @@ Using LDA, we can review an estimated grouping of topics that were discussed in 
 
 The discussion topics may not be the same as the important features for the model.  In the above example LDA analysis, n\_gram range of 3- and 4-word strings were used with the TFIDF vectorizer.  We can see word fragments are prevalent, again showing that further in-depth spell checking may improve the model.  We do see common logical topics coming up, such as discussing manufacturing orders, financial markets, and money supply.  If we compare this to LDA below on communications that preceded rate decreases:
 
-![6](images/6.png)
+![6](images/6.jpg)
 
 Here we see similar themes coming, some logical topics we would expect to be frequently discussed.  Further in-depth LDA analysis may assist in determining what meaningful topics could be typically discussed before rate decreases.  Typically rate decreases happen when the US economy enters a recession, so two common themes should be likely coming up, even though they may seem contradictory: high fed confidence in the economy or low fed confidence in the economy.  Recessions typically follow periods of rate hikes, so the fed may be over-confident in the strength before a recession, and hike rates too far.  Their communications during that time may be highly optimistic and confident.  They may also begin warning of an upcoming recession, economic weakness, or over-valuations in financial markets before a recession.  It may be useful to run LDA on a smaller set of pre-recession data.
 
@@ -130,7 +130,7 @@ Dot-Com Crash
 
 As we usually see, the interest rates were steadily increasing leading up to the dot-com crash.  In this model iteration, it experienced some confusion on the way down again.  Later on, in this technical document, we&#39;ll be reviewing how the model can be improved, and how this volatility can be reduced.  Currently each month observation is treated as a unique and isolated occurrence, the previous interest rates are not considered.
 
-Part 4: Model Improvement
+Part 4: Model Weakness
 
 Interest rate data inherently has a time series component.  In this model, each observation point is treated as an independent occurrence with no direct connection to the points before or after.  Considering the data as completely independent can still create a fairly useful model, as seen above.  The model was fit and tested on a random train/test split of 75%/25%.
 
@@ -140,45 +140,43 @@ To test this theory, testing was done with a time-series based train/test split.
 
 ![11](images/11.png)
 
-The model performs very well as expected until 2008 since it had a complete view of the data, then falls apart with erratic predictions after 2008.  It moves month to month between forecasting an increase or decrease.  We can correct this problem by using a single period rounded moving average.  The results of the change are below:
+The model performs very poorly after 2008, if it has been given no observations of communications since then.  The model is relying on unique features that were not present, or not important, in order to forecast past interest rate sentiment.  The model predictions are quite volatile, so we&#39;ll review results if we convert the predictions into rounded moving averages:
 
-![12](images/12.png)
+![12](images/12.jpg)
 
-By smoothing out the predictions, using the single period moving average, the confusion the model experienced month to month averages out to a fairly accurate long-term prediction.  Again, to note, the above model was only trained on data until 2008, so it had no information on proper nouns or dates to connect to the current rate environment of the past 10 years.  It was not trained on the full dataset before 2008, only a random 75% partial sample.
+It reduces the volatility, but doesn&#39;t significantly improve the model enough to be considered useful.
 
 Below are the moving average predictions with a model trained only until the year 2000:
 
-![13](images/13.png)
+![13](images/13.jpg)
 
-The overall accuracy of this model was 85%.  The accuracy since 2000 was still quite adequate.  It correctly forecasted the rate decreases of the dot-com recession before they happened, and the rate decreases of the 2008 recession.  The current quantitative easing environment was also mostly forecasted well.
+The accuracy of the predictions after the year 2000 was only about 30%.  The model is most definitely relying on features of the newer documents in order to make predictions for recent years.
 
 
 
 Part 5: Use Case, Limitations, Future Improvements
 
-This is not a tool that should be used on its own to make investment decisions.  When used in addition to other analysis, it would however be a useful addition.  The FOMC future target rates are a source of endless debate among financial professionals, for good reason.  The FOMC does not always follow their own intended plans, and can change plans at any time.  They are forced to react to changing economic situations, rather than dictate the course of the economy and interest rates.
+**How could this model be used?  **
 
-With further improvements the model would be a strong analysis tool to compliment other quantitative and qualitative analysis.  Improvements may include but not be limited to:
+Carefully, and only in addition to other tools.
 
-1. More thorough spell checking.  The current spell checking used for this model was limited by computing power and time available.  Investing more resources into spell checking models results in better accuracy.
-2. Increase the quantity of text available to the model, and modify the criteria for a text to be included in the model.  This model used the largest single document for each month.  There are several flaws with this method, such as the fact that the largest file size may not be the most meaningful document, and some documents have multi-part PDF&#39;s that would only be half-covered with this current method.
-3. Revising the y-target.  This could include revising how far out the target is, and the threshold for considering an interest rate change to be significant enough to be considered non-neutral.
+As mentioned, the nature of interest rate environments shifts over time significantly.  The communications, environment, and actions have little connection between 1970 and 2010.  US interest rates are a major subject of endless debate among the most experienced and skilled financial managers.  The intended goals of the FOMC may even not be met, as they react to economic or political shifts.
 
-Supplemental recommended analysis would include:
+**Model Improvement:**
 
-1. Independent review of economic conditions.
-2. Qualitative review of FOMC political objectives, political obligations, and personalities.  This would include reviewing these features of the leadership, and determining an overall picture of the entire FOMC group.
-3. Review of quantitative easing status.
+Revisiting past decisions may increase the predictive strength of the model into completely unseen environments.  Increasing the number of documents used per month or increasing the range of years used to train the model may be useful.
 
-The last point would be highly critical to review, given the unprecedented balance sheet expansion by central banks globally following the 2008 recession.  Decreasing the balance sheets of central banks may have the same effect on financial markets as interest rate increases.  Leading up to our next global recession, quantitative tightening will be a major central bank policy action to watch.
+The model would have practical uses, only in addition to using other tools.  The model would also need to be trained on the full dataset, rather than performing a split during a certain year.  The model&#39;s performance in changing environments requires some features built on the current environment.  To note, it has a moderately high likelihood of missing changing signals in untrained and unknown environments.  The model may be trained currently to view the current environment as &#39;always flat, only increasing if it sees X signals&#39;.  It may not know when an interest rate turn may happen, if one of two factors is true:
 
-A challenge to developing a model for predicting interest rate changes primarily sits in the changing nature of central banking over time.  Personalities involved in decisions change over time, the types of communications change over time, the political objectives change over time, the tools used by central banks changes over time, and the global economic situation changes over time.  We are currently in an unprecedented global financial situation:
+1. The model is not trained on anticipating a possible down-turn.  The language the Powell FOMC may use may be unique and not share past FOMC communication characteristics before a down-turn.
 
-1. Low growth
-2. Low interest rates
-3. High wealth inequality
-4. High debt, both government and private
-5. Large central bank asset balance sheets
+2. The down-turn may be unique compared to past incidents, economically, and the FOMC communications may not include any features that anticipate a recession or monetary easing.
 
-As a recession predictor, this model would not be advisable to use.  As a supplementary fed sentiment predictor, it may be useful when combined with other tools and analysis.  If multiple tools provide mixed signals, it may be an indicator of either a neutral environment and/or more review is needed.  If multiple tools all raise the red flag in unison, it may be a good signal to shore up one&#39;s financial defences.
+If the model is not trained on a specific environment&#39;s communications, the communications may hold features that are significantly different from the past, and a model not trained on the new environment may have no predictive value.  A model trained on the new current environment may be overfitting to the environment **so far** , and have no ability to anticipate a change.
+
+There is no easy solution to forecasting US interest rates.  NLP on FOMC communications may be a valuable tool if combined with several other tools.  It should only be considered one flag.  Even if a current market environment is unique, FOMC communications may still contain feature similarities before other past market shocks that forecast rate change (Fed over-confidence, fed warnings about risk, etc).
+
+This current bull run (as of February 2019) has been unprecedented, the portion of money managed solely on quant models is one of those never before experienced features.  The weaknesses identified with this project are a common weakness of any quantitative machine learning model that&#39;s been given responsibility over financial actions.  They won&#39;t consider those [black swans](https://en.wikipedia.org/wiki/The\_Black\_Swan\_(Taleb\_book)), and they only what they&#39;ve seen before.  Training a model on data going back 50 years might give the illusion of a robust model, but it&#39;s easy to pull out a small part of its knowledge and realize just how weak it is.
+
+**Every bear until now has jumped out of a bush, the next one might jump down from a tree.**  It&#39;s a great supplement to have a model beside you keeping an eye on those bushes, as long as it still has a human looking out for everything else.
 
