@@ -100,7 +100,7 @@ Using LDA, we can review an estimated grouping of topics that were discussed in 
 
 The discussion topics may not be the same as the important features for the model.  In the above example LDA analysis, n\_gram range of 3- and 4-word strings were used with the TFIDF vectorizer.  We can see word fragments are prevalent, again showing that further in-depth spell checking may improve the model.  We do see common logical topics coming up, such as discussing manufacturing orders, financial markets, and money supply.  If we compare this to LDA below on communications that preceded rate decreases:
 
-![6](images/6.jpg)
+![6](images/6.png)
 
 Here we see similar themes coming, some logical topics we would expect to be frequently discussed.  Further in-depth LDA analysis may assist in determining what meaningful topics could be typically discussed before rate decreases.  Typically rate decreases happen when the US economy enters a recession, so two common themes should be likely coming up, even though they may seem contradictory: high fed confidence in the economy or low fed confidence in the economy.  Recessions typically follow periods of rate hikes, so the fed may be over-confident in the strength before a recession, and hike rates too far.  Their communications during that time may be highly optimistic and confident.  They may also begin warning of an upcoming recession, economic weakness, or over-valuations in financial markets before a recession.  It may be useful to run LDA on a smaller set of pre-recession data.
 
@@ -142,13 +142,13 @@ To test this theory, testing was done with a time-series based train/test split.
 
 The model performs very poorly after 2008, if it has been given no observations of communications since then.  The model is relying on unique features that were not present, or not important, in order to forecast past interest rate sentiment.  The model predictions are quite volatile, so we&#39;ll review results if we convert the predictions into rounded moving averages:
 
-![12](images/12.jpg)
+![12](images/12.png)
 
 It reduces the volatility, but doesn&#39;t significantly improve the model enough to be considered useful.
 
 Below are the moving average predictions with a model trained only until the year 2000:
 
-![13](images/13.jpg)
+![13](images/13.png)
 
 The accuracy of the predictions after the year 2000 was only about 30%.  The model is most definitely relying on features of the newer documents in order to make predictions for recent years.
 
