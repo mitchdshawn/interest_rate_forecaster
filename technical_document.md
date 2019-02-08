@@ -63,7 +63,7 @@ As seen above, the interest rate environments we have been in for the past few d
 
 I&#39;ve settled on a 6-month sentiment prediction, rather than a monthly prediction.  This is focused enough to be an actionable prediction, but broad enough to not throw high volatility into the model.  Below is the example actual flow changes of interest rates.  Middle points in the line are neutral, with rising or falling 6-month rates being above or below.
 
-All data points are considered to be independent of each other.  Time series analysis for interest rate prediction isn&#39;t very useful – past interest rates are not a good indicator of future interest rates.  They would only be primarily useful if there was a routine cyclical pattern.  Recessions occur at irregular intervals, and the long-term interest rate environment can experience significant shifts over time.  The past 10 year near-zero interest rate environment has no precedent, for example.  A major goal of the model is to predict sudden shifts, not forecast current trend.
+All data points are considered to be independent of each other.  Time series analysis for interest rate prediction isn&#39;t very useful â€“ past interest rates are not a good indicator of future interest rates.  They would only be primarily useful if there was a routine cyclical pattern.  Recessions occur at irregular intervals, and the long-term interest rate environment can experience significant shifts over time.  The past 10 year near-zero interest rate environment has no precedent, for example.  A major goal of the model is to predict sudden shifts, not forecast current trend.
 
 ![2](images/2.png)
 
@@ -156,7 +156,7 @@ The accuracy of the predictions after the year 2000 was only about 30%.  The mod
 
 Part 5: Use Case, Limitations, Future Improvements
 
-**How could this model be used?  **
+__How could this model be used?__
 
 Carefully, and only in addition to other tools.
 
