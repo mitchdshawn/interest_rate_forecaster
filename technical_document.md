@@ -1,14 +1,12 @@
-
-
-**Technical Document - US FOMC Communication Interest Rate Forecaster**
+# Technical Document - US FOMC Communication Interest Rate Forecaster
 
 Shawn D. Mitchell
 
-Executive Summary
+### Executive Summary
 
 Using US Federal Reserve Open Market Committee public communications, we can forecast with approximately 65% accuracy the following 6-month interest rate sentiment.  This is based on using FOMC communications since 1960, and allowing the model to be trained on a random 75% training sample.  Removing portions of data based on date significantly reduces future model accuracy, as the features of the communications changes over time, and the economic/political environment changes over time.  When used with caution, an NLP model using FOMC communications as features can be a useful supplemental tool for interest rate forecasting.
 
-Part 1: Summary and Problem Statement
+## Part 1: Summary and Problem Statement
 
 Can predictions of future interest rates be made based solely on FOMC communications?
 
@@ -16,7 +14,7 @@ Predicting the future actions of the US Federal Reserve is a difficult task, wit
 
 An NLP model with reasonable accuracy, combined with additional quantitative and qualitative information, would be a highly valuable tool.  The model should not be relied on as a stand-alone tool.
 
-Part 2: Data
+## Part 2: Data
 
 Two sources of data were required for the project: historical interest rates, and the FOMC communication documents.
 
@@ -24,7 +22,7 @@ The FOMC provides download links for all public communications, ranging back to 
 
 To obtain the data, a web scraper function was developed to loop through all requested years and download all documents available for them.  Since the types of communications varied through the years, a single type of document wasn&#39;t used (such as the currently running Beige Book).  Some documents released are of very little analysis value, only containing a brief press statement or announcement that information will be released later.
 
-There were three options for deciding what documents to use:
+##### There were three options for deciding what documents to use:
 
 1. Manual process of scripting specific documents types to use for all months
 2. Use all documents
@@ -67,12 +65,12 @@ All data points are considered to be independent of each other.  Time series ana
 
 ![2](images/2.png)
 
-To summarize the data used:
+##### To summarize the data used:
 
 1. Features are extracted from the monthly PDF communication with the largest file size.  Some months do not have any communications.
 2. Y-target is the following 6-month interest rate change: 1, 0, -1 for increasing, neutral, or falling.  The threshold for an increase or decrease is 0.25%.  A 6-month change that does not exceed that plus or minus will be considered neutral.
 
-Part 3: Modelling
+## Part 3: Modelling
 
 Preprocessing work included stemming, stop word removal, conversion to lower case.  Standard process in NLP, removed differences between words with identical or very similar meanings.
 
@@ -80,19 +78,19 @@ Vectorizer used was TFIDF.  All communications were expected to have a large com
 
 XGBoost was chosen to the be model, based on the strength and computational speed of the model.  XGBoost has a large set of possible parameters, however the only non-default setting used was setting the limit on depth to 4.  XGBoost has a very strong tendency to overfit to training data, the model used for this project resulted in a 100% training accuracy but approximately 65% accuracy on testing data.  A potential improvement for the model could be grid searching parameters, primarily with the intention of decreasing variance (overfit).  The first parameter in XGBoost to reduce overfit is reducing the depth limit, however a further reduction past 4 was not found to significantly reduce overfit.
 
-Feature importance summary:
+##### Feature importance summary:
 
 ![3](images/3.png)
 
 The feature importance summary shows mostly logical features having the strongest predictive performance.  A potential further improvement would be building on the stop words, adding pronouns or phrases from meeting minutes that were addressing participants.  Further spell checking would assist in removing word fragments that were viewed as important n\_gram features.
 
-Accuracy Review
+##### Accuracy Review
 
 The model achieves approximately 65% accuracy currently.  A higher accuracy is potentially undesirable, due to the nature of the features used in creating the predictions.  The real future interest rates are not always a function of what the FOMC intends on doing.  The Federal Reserve would only be able to precisely predict their own future actions if they had perfect information on the state of the economy and financial markets in the future.  A model that does achieve a very high accuracy may very likely be finding non-ideal features to predict future rates, such as dates or proper nouns.
 
 ![4](images/4.png)
 
-Topic Analysis
+##### Topic Analysis
 
 Using LDA, we can review an estimated grouping of topics that were discussed in communications that preceded reductions or increases in actual interest rates.  Reviewing the topics for the topics that preceded increases:
 
@@ -104,7 +102,7 @@ The discussion topics may not be the same as the important features for the mode
 
 Here we see similar themes coming, some logical topics we would expect to be frequently discussed.  Further in-depth LDA analysis may assist in determining what meaningful topics could be typically discussed before rate decreases.  Typically rate decreases happen when the US economy enters a recession, so two common themes should be likely coming up, even though they may seem contradictory: high fed confidence in the economy or low fed confidence in the economy.  Recessions typically follow periods of rate hikes, so the fed may be over-confident in the strength before a recession, and hike rates too far.  Their communications during that time may be highly optimistic and confident.  They may also begin warning of an upcoming recession, economic weakness, or over-valuations in financial markets before a recession.  It may be useful to run LDA on a smaller set of pre-recession data.
 
-Misclassification Review
+##### Misclassification Review
 
 Below is a comparison of the actual interest rate, the actual 6-month change, and the model&#39;s predicted changes.  Note that the specific predictions for this are based on the last train/test sample that was taken.  Specific predictions will vary based on this random split, but the results for every split will be similar.
 
@@ -112,25 +110,25 @@ Below is a comparison of the actual interest rate, the actual 6-month change, an
 
 Next, we&#39;ll review a few examples of interest rate environments that it handles well, where it didn&#39;t handle it well, and review the logic behind how it was mistaken.
 
-Current rate environment
+##### Current rate environment
 
 ![8](images/8.png)
 
 The model was able to identify the historically unusual low interest rate environment we&#39;ve been in globally since the 2008 recession.  It predicted stable rates, and continues to predict further rate increases as the year moves on.  We are currently in one of the longest market bull runs in history, a recession is likely lurking around the corner for US markets as of early 2019.  Next, we&#39;ll review how the model handled the 2008 recession.
 
-2008 Recession
+##### 2008 Recession
 
 ![9](images/9.png)
 
 Again, the top line is the actual 6-month change, the bottom line is the predicted change.  Leading up to the 2008 crash, as typically happens, interest rates were steadily increasing then dropped after the recession hit.  In this iteration (based on the random train/test split), the model experienced confusion on just when the rate hikes would stop and plateau.  It would have been late on the drop, but identified when thing would hit the bottom and become flat.
 
-Dot-Com Crash
+##### Dot-Com Crash
 
 ![10](images/10.png)
 
 As we usually see, the interest rates were steadily increasing leading up to the dot-com crash.  In this model iteration, it experienced some confusion on the way down again.  Later on, in this technical document, we&#39;ll be reviewing how the model can be improved, and how this volatility can be reduced.  Currently each month observation is treated as a unique and isolated occurrence, the previous interest rates are not considered.
 
-Part 4: Model Weakness
+## Part 4: Model Weakness
 
 Interest rate data inherently has a time series component.  In this model, each observation point is treated as an independent occurrence with no direct connection to the points before or after.  Considering the data as completely independent can still create a fairly useful model, as seen above.  The model was fit and tested on a random train/test split of 75%/25%.
 
@@ -154,18 +152,20 @@ The accuracy of the predictions after the year 2000 was only about 30%.  The mod
 
 
 
-Part 5: Use Case, Limitations, Future Improvements
+## Part 5: Use Case, Limitations, Future Improvements
 
-__How could this model be used?__
+##### How could this model be used?
 
 Carefully, and only in addition to other tools.
 
 As mentioned, the nature of interest rate environments shifts over time significantly.  The communications, environment, and actions have little connection between 1970 and 2010.  US interest rates are a major subject of endless debate among the most experienced and skilled financial managers.  The intended goals of the FOMC may even not be met, as they react to economic or political shifts.
 
-**Model Improvement:**
+##### Model Improvement:
 
 Revisiting past decisions may increase the predictive strength of the model into completely unseen environments.  Increasing the number of documents used per month or increasing the range of years used to train the model may be useful.<br>
 Removing all pronouns for documents may be useful.  If a model is over-fit on an FOMC member's name to identify the rate environment, it may increase the importance of using generalized features (discussion of the economy).  A manual listing of all pronouns would be a time consuming process, not ideal, and would need to be continually updated.  If additional document types were added, those documents would also need to be screened for pronouns.  Reviewing feature importance would be a much faster way of scanning for and eliminating pronouns, but would need many passes to remove the most important ones.  If some pronouns were removed, the model may fit to different ones in the next iteration.  It would remain to be seen if removing these pronouns would still result in a model with a useful level of accuracy.
+
+##### Model Weakness:
 
 The model would have practical uses, only in addition to using other tools.  The model would also need to be trained on the full dataset, rather than performing a split during a certain year.  The model&#39;s performance in changing environments requires some features built on the current environment.  To note, it has a moderately high likelihood of missing changing signals in untrained and unknown environments.  The model may be trained currently to view the current environment as &#39;always flat, only increasing if it sees X signals&#39;.  It may not know when an interest rate turn may happen, if one of two factors is true:
 
