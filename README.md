@@ -11,7 +11,7 @@ Using US Federal Reserve Open Market Committee public communications, we can for
 
 Can NLP be used to forecast US rate changes with a useful level of accuracy?
 
-__Requirements:__<br>
+### Requirements
 Python 3.6+<br>
 selenium<br>
 fredapi<br>
@@ -21,3 +21,7 @@ gensim<br>
 nltk<br>
 xgboost<br>
 pyLDAvis<br>
+
+### Data sources
+[US Federal Reserve FRED Database](https://fred.stlouisfed.org/)
+[US FOMC](https://fraser.stlouisfed.org/title/677)
