@@ -158,7 +158,7 @@ The accuracy of the predictions after the year 2000 was only about 30%.  The mod
 
 Carefully, and only in addition to other tools.
 
-As mentioned, the nature of interest rate environments shifts over time significantly.  The communications, environment, and actions have little connection between 1970 and 2010.  US interest rates are a major subject of endless debate among the most experienced and skilled financial managers.  The intended goals of the FOMC may even not be met, as they react to economic or political shifts.
+Using a final check, we can review performance based on the real-world scenario.  The model would be trained using a random sample (ensure less overfit) of all data available.  For example if this was January 2001, we would use all data until June 2000 (-6 months).  When using this method, we obtain __approximately 65% accuracy__ again.  
 
 ##### Model Improvement:
 
